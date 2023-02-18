@@ -1,87 +1,124 @@
-#
-#	  ____  __  __  ___  _   _     __      __   
-#	 (  _ \(  )(  )/ __)( )_( )    \ \     \ \  
-#	  )___/ )(__)( \__ \ ) _ (      > >     > > 
-# 	 (__)  (______)(___/(_) (_)    /_/     /_/  
-#
-#	                   /\                        
-#	                   ||                        
-#	                   ||                        
-#	                   \/                        
-#	   __      __     ___  _    _    __    ____  
-#	  / /     / /    / __)( \/\/ )  /__\  (  _ \ 
-#	 < <     < <     \__ \ )    (  /(__)\  )___/ 
-#	  \_\     \_\    (___/(__/\__)(__)(__)(__)   
-#
-#----------------------------------------------
-NAME		=	push_swap
+#			 _______                 #
+#			 \  ___ `'.              #
+#		 _.._ ' |--.\  \       _.._  #
+#	   .' .._|| |    \  '    .' .._| #
+#	   | '    | |     |  '   | '     #
+#	 __| |__  | |     |  | __| |__   #
+#	|__   __| | |     ' .'|__   __|  #
+#	   | |    | |___.' /'    | |     #
+#	   | |   /_______.'/     | |     #
+#	   | |   \_______|/      | |     #
+#	   | |                   | |     #
+#	   |_|                   |_|     #
+#/''''''''''''''''''''''''''''''''''\#
+#1;bold 2;low intensity 4;Underline 5;Blink 8;invis 9;strike
+BLK	= \033[30m
+RED	= \033[31m
+GRN	= \033[32m
+BRN	= \033[33m
+BLU	= \033[34m
+PUR	= \033[35m
+CYN	= \033[36m
+LGR	= \033[37m
+RST	= \033[0m
 
-#SRC_SUBDIR	=	file.c
-SRC_ROOT	=	main.c
-SRC_DIR		=	src/
-OBJ_DIR		=	obj/
+NAME		:=	fdf
+UNAME_S 	:= $(shell uname -s)
 
-SRC			=	${addprefix ${SRC_DIR},${SRC_ROOT}}
-#				${addprefix ${SRC_DIR}subdir/,${SRC_SUBDIR}} \
+SRC_D		:=	src/
+BUILD_D		:=	.build/
+LIB_D		:=	libft/ mlx/
+INC			:=	libft/	mlx/ inc/
 
-OBJ 		=	${SRC:%.c=%.o}
-OBJF		=	${addprefix ${OBJ_DIR},${notdir ${OBJ}}}
+LIB			:=	ft mlx
+INC			:=	inc/ mlx/ libft/
+SRC			:=	fdf.c									\
+				color/color_utils.c 	color/extract_single_color.c\
+				color/line_gradient.c 	color/rgbo_color.c\
+				draw/draw_line.c 		draw/draw_map.c\
+				draw/draw_pixel.c						\
+				pts/ft_isometric.c		pts/parse_map.c\
+				pts/pts_utils.c							\
+				utils/dup_list.c 		utils/img_utils.c\
+				utils/list_utils.c						\
+				hook/hook_functions.c 	hook/hook_utils.c\
+				hook/hook_utils2.c
+FRAMEWORK	:=	OpenGL	AppKit
 
+SRC			:=	$(SRC:%=$(SRC_D)%)
+OBJ 		:=	$(SRC:$(SRC_D)%.c=$(BUILD_D)%.o)
+DEPS        :=	$(OBJ:.o=.d)
 
-HEADER_DIR	=	libft/	inc/
-LIB_DIR		=	libft/ 
-LIB_FILES	=	ft
+ifeq ($(UNAME_S),Linux)
+INC		 	:=	libft	inc	minilibx-linux /usr/include/
+LIB_D		:=	minilibx-linux/ libft/ /usr/lib/
+LIB			:=	mlx_Linux ft Xext X11 m z
+LIBS_LINUX	:=	ft mlx_Linux
+FRAMEWORK	:=	
+endif
+RM			:=	rm -rf
+CC			:=	gcc
+DIR_DUP     =	mkdir -p "$(@D)"
+#-MMD -MP = Used to add dependencies during precomp. (for .h)
+CPPFLAGS    :=	-MMD -MP $(addprefix -I,$(INC))
+CFLAGS		:=	-Wextra -Werror -Wall
+# -(r)eplace the older objects, -(c)reate if no lib, -s index stuff
+AR          :=	ar
+ARFLAGS     :=	-r -c -s
+LDFLAGS     :=	$(addprefix -L,$(dir $(LIB_D)))
+LDLIBS      :=	$(addprefix -l,$(LIB))
+LDFMWK		:=	$(addprefix -framework ,$(FRAMEWORKS))
+MAKEFLAGS   += --no-print-directory
+#-----------------------------all------------------------------------
+all		:	$(NAME)
+#-----------------------------NAME-----------------------------------
+$(NAME)	:	$(OBJ)
+			$(MAKE) complib
+			${CC} $(LDFLAGS) $(OBJ) $(LDLIBS) $(LDFMWK) -o $(NAME)
+			$(info MAKING $(NAME).....)
+			echo "\033[5;32m\t\tFinished compiling $(NAME) !!! $(CLR)"
+#------------------------OBJ COMPILATION-----------------------------
+$(BUILD_D)%.o	:	$(SRC_D)%.c
+			$(DIR_DUP)
+			$(CC) $(CFLAGS) $(CPPFLAGS) -O2 -c $< -o $@
+			echo created $(@F)
 
-HEADERS		=	${addprefix -I,${HEADER_DIR}}
-LIBS		=	${addprefix -L,${LIB_DIR}} ${addprefix -l,${LIB_FILES}}
-
-RM			=	rm -rf
-CC			=	gcc
-CFLAGS		=	-Wextra -Werror -Wall
-
-#FRAMEWORKS	=	OpenGL	AppKit
-#FFLAGS		=	${addprefix -framework ,${FRAMEWORKS}}
-
-
-
-
-#--------------------------------------------------------------------------------
-
-%.o		:	%.c
-			${CC} ${CFLAGS} ${HEADERS} -c $< -o ${addprefix ${OBJ_DIR},${notdir $@}}
-all		:	${NAME}
-
-${NAME}	:	complib ${OBJ}
-			${CC} ${OBJF} ${LIBS}  -o ${NAME}
-
+-include	${DEPS}
+#----------------------------COMPLIB---------------------------------
 complib	:
-			@${MAKE} -s -C libft
-
+	$(info COMPILING THE LIBS)
+ifeq ($(UNAME_S),Linux)
+	@$(MAKE) -s -C minilibx-linux
+	@$(MAKE) -s -C libft
+endif
+ifeq ($(UNAME_S),Darwin)
+	@$(MAKE) -s -C libft
+	@$(MAKE) -s -C mlx
+endif
+#----------------------------CLEAN-----------------------------------
 clean	:
-			${RM} ${OBJF}
-			${MAKE} -C ./libft clean
-
+	$(RM) $(OBJ) $(DEPS)
+	$(MAKE) -C libft clean
+ifeq ($(UNAME_S),Darwin)
+	$(MAKE) -C mlx clean
+else
+	$(MAKE) -C minilibx-linux clean
+endif
+	$(info CLEANING...)
+	echo "$(CYN) \t\tALL CLEANED $(RST)"
+#----------------------------FCLEAN----------------------------------
 fclean	:	clean
-			${MAKE} -C ./libft fclean
-			${RM} ${NAME}
-
+	$(RM) $(NAME)
+	$(MAKE) -C libft fclean
+ifeq ($(UNAME_S),Darwin)
+	$(MAKE) -C /mlx clean
+else
+	$(MAKE) -C minilibx-linux clean
+endif
+	echo "\033[5;36m \t\tALL F*NG CLEANED !!! $(RST)"
+	$(info ALL F*NG CLEANING)
+#------------------------------RE------------------------------------
 re		:	fclean all
 
-#			***Linux stuff***
-#INCS_LX 		=	libft/ inc/
-#LIB_DIR_LX		=	libft/ inc/
-#HEADERS_LX		=	${addprefix -I,${INCS_LINUX}}
-#LIB_DIR_LX		=	${addprefix -L,${INCS_LINUX}}
-#LIBS_LX		=	-lft
-#OBJ_FLAGS_LX	=
-
-#linux	:	fclean cleanlinux	
-#			@${MAKE} -s -C libft
-#			${CC} ${CFLAGS} ${HEADERS_LINUX} ${OBJS_FLAGS_LX} -c ${SRC}
-#			$(CC) ${addsuffix .o,${notdir ${basename ${SRC}}}}  -Lminilibx-linux -lmlx_Linux -Llibft -lft  -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
-
-#cleanlinux :
-#			${MAKE} -C libft fclean
-#			${RM} ${addsuffix .o,${notdir ${basename ${SRC}}}}
-
-.PHONY	:	all clean fclean e
+.PHONY	:	all clean fclean re
+.SILENT :
