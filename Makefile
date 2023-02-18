@@ -1,16 +1,19 @@
-#			 _______                 #
-#			 \  ___ `'.              #
-#		 _.._ ' |--.\  \       _.._  #
-#	   .' .._|| |    \  '    .' .._| #
-#	   | '    | |     |  '   | '     #
-#	 __| |__  | |     |  | __| |__   #
-#	|__   __| | |     ' .'|__   __|  #
-#	   | |    | |___.' /'    | |     #
-#	   | |   /_______.'/     | |     #
-#	   | |   \_______|/      | |     #
-#	   | |                   | |     #
-#	   |_|                   |_|     #
-#/''''''''''''''''''''''''''''''''''\#
+#
+#	  ____  __  __  ___  _   _     __      __   
+#	 (  _ \(  )(  )/ __)( )_( )    \ \     \ \  
+#	  )___/ )(__)( \__ \ ) _ (      > >     > > 
+# 	 (__)  (______)(___/(_) (_)    /_/     /_/  
+#
+#	                   /\                        
+#	                   ||                        
+#	                   ||                        
+#	                   \/                        
+#	   __      __     ___  _    _    __    ____  
+#	  / /     / /    / __)( \/\/ )  /__\  (  _ \ 
+#	 < <     < <     \__ \ )    (  /(__)\  )___/ 
+#	  \_\     \_\    (___/(__/\__)(__)(__)(__)   
+#
+#----------------------------------------------
 #1;bold 2;low intensity 4;Underline 5;Blink 8;invis 9;strike
 BLK	= \033[30m
 RED	= \033[31m
@@ -22,38 +25,27 @@ CYN	= \033[36m
 LGR	= \033[37m
 RST	= \033[0m
 
-NAME		:=	fdf
+NAME		:=	push_swap
 UNAME_S 	:= $(shell uname -s)
 
 SRC_D		:=	src/
 BUILD_D		:=	.build/
-LIB_D		:=	libft/ mlx/
-INC			:=	libft/	mlx/ inc/
+LIB_D		:=	libft/
+INC			:=	libft/inc/	inc/
 
-LIB			:=	ft mlx
-INC			:=	inc/ mlx/ libft/
-SRC			:=	fdf.c									\
-				color/color_utils.c 	color/extract_single_color.c\
-				color/line_gradient.c 	color/rgbo_color.c\
-				draw/draw_line.c 		draw/draw_map.c\
-				draw/draw_pixel.c						\
-				pts/ft_isometric.c		pts/parse_map.c\
-				pts/pts_utils.c							\
-				utils/dup_list.c 		utils/img_utils.c\
-				utils/list_utils.c						\
-				hook/hook_functions.c 	hook/hook_utils.c\
-				hook/hook_utils2.c
-FRAMEWORK	:=	OpenGL	AppKit
+LIB			:=	ft
+INC			:=	inc/ libft/
+SRC			:=	push_swap.c
+#FRAMEWORK	:=	OpenGL	AppKit
 
 SRC			:=	$(SRC:%=$(SRC_D)%)
 OBJ 		:=	$(SRC:$(SRC_D)%.c=$(BUILD_D)%.o)
 DEPS        :=	$(OBJ:.o=.d)
 
 ifeq ($(UNAME_S),Linux)
-INC		 	:=	libft	inc	minilibx-linux /usr/include/
-LIB_D		:=	minilibx-linux/ libft/ /usr/lib/
-LIB			:=	mlx_Linux ft Xext X11 m z
-LIBS_LINUX	:=	ft mlx_Linux
+INC		 	:=	libft/inc	inc
+LIB_D		:=	libft/
+LIB			:=	ft
 FRAMEWORK	:=	
 endif
 RM			:=	rm -rf
@@ -87,36 +79,27 @@ $(BUILD_D)%.o	:	$(SRC_D)%.c
 #----------------------------COMPLIB---------------------------------
 complib	:
 	$(info COMPILING THE LIBS)
-ifeq ($(UNAME_S),Linux)
-	@$(MAKE) -s -C minilibx-linux
 	@$(MAKE) -s -C libft
+ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
-	@$(MAKE) -s -C libft
-	@$(MAKE) -s -C mlx
 endif
 #----------------------------CLEAN-----------------------------------
 clean	:
 	$(RM) $(OBJ) $(DEPS)
 	$(MAKE) -C libft clean
 ifeq ($(UNAME_S),Darwin)
-	$(MAKE) -C mlx clean
 else
-	$(MAKE) -C minilibx-linux clean
 endif
-	$(info CLEANING...)
 	echo "$(CYN) \t\tALL CLEANED $(RST)"
 #----------------------------FCLEAN----------------------------------
 fclean	:	clean
 	$(RM) $(NAME)
 	$(MAKE) -C libft fclean
 ifeq ($(UNAME_S),Darwin)
-	$(MAKE) -C /mlx clean
 else
-	$(MAKE) -C minilibx-linux clean
 endif
 	echo "\033[5;36m \t\tALL F*NG CLEANED !!! $(RST)"
-	$(info ALL F*NG CLEANING)
 #------------------------------RE------------------------------------
 re		:	fclean all
 
