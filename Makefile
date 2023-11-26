@@ -8,30 +8,47 @@ PUR	= \033[35m
 CYN	= \033[36m
 LGR	= \033[37m
 RST	= \033[0m
-
-NAME		:=	pipex
+NAME		:=	minishell
 UNAME_S 	:= $(shell uname -s)
-
+#---------------Directories----------------------
 SRC_D		:=	src/
 BUILD_D		:=	.build/
 LIB_D		:=	libft/
-INC			:=	libft/inc/	inc/
-
-LIB			:=	ft
 INC			:=	inc/ libft/inc/
-SRC			:=	main.c	path_functions.c	utils.c
-#FRAMEWORK	:=	OpenGL	AppKit
 
+#---------------Add .c / .h here \/--------------
+BUILTIN		:=	env.c	export.c	unset.c	echo.c	pwd.c	cd.c	exit.c
+UTILS		:=	free_return.c	export_unset_utils.c	env_utils.c		\
+				getvar.c	extract_var_data.c	extract_var_name.c		\
+				add_to_matrix.c	free_join.c	count_strings.c	only_spaces.c\
+				fprint_debug.c	fprint_matrix.c	is_meta.c	is_string.c\
+				token_struct_utils.c	parse_tokens_utils.c	fatal_error.c\
+				pipes_utils.c	free_shell.c free_cmds.c	free_tokens.c\
+				close_fds.c	check_env_arg.c
+
+PARSING		:=	parse_tokens.c	tokenizer.c	tokenization_utils.c expand_var.c\
+				expand_string.c	init_cmd_struct.c open_io.c	set_fd_to_pipe.c
+
+SRC			:=	main.c	exec_builtins.c	init_env.c	prompt.c	signal_handler.c	\
+				update_history.c	execute.c	heredoc.c
+
+LIB			:=	ft readline
+#FRAMEWORK	:=	OpenGL	AppKit
+#----------------------IGNORE--------------------
+#------------------------------------------------
+SRC			+=	$(BUILTIN:%=builtin/%) $(UTILS:%=utils/%) $(PARSING:%=parsing/%)
 SRC			:=	$(SRC:%=$(SRC_D)%)
 OBJ 		:=	$(SRC:$(SRC_D)%.c=$(BUILD_D)%.o)
 DEPS        :=	$(OBJ:.o=.d)
-
+#------------------------------------------------
+#----------------Linux libs \/-------------------
 ifeq ($(UNAME_S),Linux)
-INC		 	:=	libft/inc	inc
 LIB_D		:=	libft/
-LIB			:=	ft
+INC			:=	inc/ libft/inc/
+LIB			:=	ft readline history
 FRAMEWORK	:=	
 endif
+#-------------------------------------------------
 RM			:=	rm -rf
 CC			:=	gcc
 DIR_DUP     =	mkdir -p "$(@D)"
