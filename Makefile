@@ -35,7 +35,8 @@ INC			:=	inc/
 FRAMEWORK	:=	
 endif
 #-------------------------------------------------
-NB_OBJ		:=	$(words $(OBJ))
+TOTAL_OBJ		:=	$(words $(OBJ))
+NB_OBJ			:=	0
 RM			:=	rm -rf
 CC			:=	gcc
 DIR_DUP     =	mkdir -p "$(@D)"
@@ -53,6 +54,8 @@ MAKEFLAGS   += --no-print-directory
 all		:	$(NAME)
 #-----------------------------NAME-----------------------------------
 $(NAME)	:	$(OBJ)
+			TOTAL_OBJ=$(find .build -name "*.o")
+			echo "currently $(TOTAL_OBJ) objects"
 			#$(MAKE) complib
 			${CC} $(LDFLAGS) $(OBJ) $(LDLIBS) $(LDFMWK) -o $(NAME)
 			$(info MAKING $(NAME).....)
@@ -63,7 +66,7 @@ $(BUILD_D)%.o	:	$(SRC_D)%.c
 			$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 			$(eval count=$(shell echo $$(($(count)+1))))
 			clear -x
-			echo created $(@F) $(count)/$(NB_OBJ)
+			echo compiled $(@F) $(count)/$(TOTAL_OBJ) objects
 
 -include	${DEPS}
 #----------------------------COMPLIB---------------------------------
