@@ -1,4 +1,5 @@
 #1;bold 2;low intensity 4;Underline 5;Blink 8;invis 9;strike
+count = 0
 BLK	= \033[30m
 RED	= \033[31m
 GRN	= \033[32m
@@ -8,47 +9,33 @@ PUR	= \033[35m
 CYN	= \033[36m
 LGR	= \033[37m
 RST	= \033[0m
-NAME		:=	minishell
+NAME		:=	philosophers
 UNAME_S 	:= $(shell uname -s)
 #---------------Directories----------------------
 SRC_D		:=	src/
 BUILD_D		:=	.build/
-LIB_D		:=	libft/
-INC			:=	inc/ libft/inc/
-
+#LIB_D		:=	libft/
+INC			:=	inc/
 #---------------Add .c / .h here \/--------------
-BUILTIN		:=	env.c	export.c	unset.c	echo.c	pwd.c	cd.c	exit.c
-UTILS		:=	free_return.c	export_unset_utils.c	env_utils.c		\
-				getvar.c	extract_var_data.c	extract_var_name.c		\
-				add_to_matrix.c	free_join.c	count_strings.c	only_spaces.c\
-				fprint_debug.c	fprint_matrix.c	is_meta.c	is_string.c\
-				token_struct_utils.c	parse_tokens_utils.c	fatal_error.c\
-				pipes_utils.c	free_shell.c free_cmds.c	free_tokens.c\
-				close_fds.c	check_env_arg.c
-
-PARSING		:=	parse_tokens.c	tokenizer.c	tokenization_utils.c expand_var.c\
-				expand_string.c	init_cmd_struct.c open_io.c	set_fd_to_pipe.c
-
-SRC			:=	main.c	exec_builtins.c	init_env.c	prompt.c	signal_handler.c	\
-				update_history.c	execute.c	heredoc.c
-
-LIB			:=	ft readline
+SRC			:=	main.c
+#LIB			:=	ft readline
 #FRAMEWORK	:=	OpenGL	AppKit
 #----------------------IGNORE--------------------
 #------------------------------------------------
-SRC			+=	$(BUILTIN:%=builtin/%) $(UTILS:%=utils/%) $(PARSING:%=parsing/%)
+#SRC			+=	$(UTILS:%=utils/%)
 SRC			:=	$(SRC:%=$(SRC_D)%)
 OBJ 		:=	$(SRC:$(SRC_D)%.c=$(BUILD_D)%.o)
 DEPS        :=	$(OBJ:.o=.d)
 #------------------------------------------------
 #----------------Linux libs \/-------------------
 ifeq ($(UNAME_S),Linux)
-LIB_D		:=	libft/
-INC			:=	inc/ libft/inc/
-LIB			:=	ft readline history
+#LIB_D		:=	libft/
+INC			:=	inc/
+#LIB			:=
 FRAMEWORK	:=	
 endif
 #-------------------------------------------------
+NB_OBJ		:=	$(words $(OBJ))
 RM			:=	rm -rf
 CC			:=	gcc
 DIR_DUP     =	mkdir -p "$(@D)"
@@ -66,7 +53,7 @@ MAKEFLAGS   += --no-print-directory
 all		:	$(NAME)
 #-----------------------------NAME-----------------------------------
 $(NAME)	:	$(OBJ)
-			$(MAKE) complib
+			#$(MAKE) complib
 			${CC} $(LDFLAGS) $(OBJ) $(LDLIBS) $(LDFMWK) -o $(NAME)
 			$(info MAKING $(NAME).....)
 			echo "\033[5;32m\t\tFinished compiling $(NAME) !!! $(CLR)"
@@ -74,13 +61,15 @@ $(NAME)	:	$(OBJ)
 $(BUILD_D)%.o	:	$(SRC_D)%.c
 			$(DIR_DUP)
 			$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
-			echo created $(@F)
+			$(eval count=$(shell echo $$(($(count)+1))))
+			clear -x
+			echo created $(@F) $(count)/$(NB_OBJ)
 
 -include	${DEPS}
 #----------------------------COMPLIB---------------------------------
 complib	:
 	$(info COMPILING THE LIBS)
-	@$(MAKE) -s -C libft
+#	@$(MAKE) -s -C libft
 ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
@@ -88,7 +77,7 @@ endif
 #----------------------------CLEAN-----------------------------------
 clean	:
 	$(RM) $(OBJ) $(DEPS)
-	$(MAKE) -C libft clean
+#	$(MAKE) -C libft clean
 ifeq ($(UNAME_S),Darwin)
 else
 endif
@@ -96,13 +85,14 @@ endif
 #----------------------------FCLEAN----------------------------------
 fclean	:	clean
 	$(RM) $(NAME)
-	$(MAKE) -C libft fclean
+#	$(MAKE) -C libft fclean
 ifeq ($(UNAME_S),Darwin)
 else
 endif
 	echo "\033[5;36m \t\tALL F*NG CLEANED !!! $(RST)"
 #------------------------------RE------------------------------------
 re		:	fclean all
+			echo "\033[5;33m \t\tALL RECOMPILED !!! $(RST)"
 
 .PHONY	:	all clean fclean re
 .SILENT :
