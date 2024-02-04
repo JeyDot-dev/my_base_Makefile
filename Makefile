@@ -9,16 +9,16 @@ PUR	= \033[35m
 CYN	= \033[36m
 LGR	= \033[37m
 RST	= \033[0m
-NAME		:=	Hi_me_brain
+NAME		:=	bureaucrats
 UNAME_S 	:= $(shell uname -s)
 #---------------Directories----------------------
 SRC_D		:=	src/
 BUILD_D		:=	.build/
 LIB_D		:=	
-INC			:=	inc/ inc/classes/
-#---------------Add .c / .h here \/--------------
+#---------------SRCs and Libs-(mac)\/--------------
 SRC			:=	main.cpp
-SRC_CLASSES	:=	
+SRC_CLASSES	:=	bureaucrat.cpp
+INC			:=	inc/ inc/classes/
 LIB			:=
 FRAMEWORK	:=
 #------------------------------------------------
@@ -27,7 +27,7 @@ SRC			:=	$(SRC:%=$(SRC_D)%)
 OBJ 		:=	$(SRC:$(SRC_D)%.cpp=$(BUILD_D)%.o)
 DEPS        :=	$(OBJ:.o=.d)
 #------------------------------------------------
-#----------------Linux libs \/-------------------
+#----------------Linux libs/Incs \/-------------------
 ifeq ($(UNAME_S),Linux)
 LIB_D		:=	
 INC			:=	inc/ inc/classes/	
