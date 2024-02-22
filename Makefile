@@ -17,7 +17,8 @@ BUILD_D		:=	.build/
 LIB_D		:=	
 #---------------SRCs and Libs-(mac)\/--------------
 SRC			:=	main.cpp
-SRC_CLASSES	:=	bureaucrat.cpp
+SRC_CLASSES	:=	Bureaucrat.cpp AForm.cpp ShrubberyCreationForm.cpp PresidentialPardonForm.cpp \
+				RobotomyRequestForm.cpp	Intern.cpp
 INC			:=	inc/ inc/classes/
 LIB			:=
 FRAMEWORK	:=
