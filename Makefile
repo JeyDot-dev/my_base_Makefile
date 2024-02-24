@@ -17,8 +17,7 @@ BUILD_D		:=	.build/
 LIB_D		:=	
 #---------------SRCs and Libs-(mac)\/--------------
 SRC			:=	main.cpp
-SRC_CLASSES	:=	Bureaucrat.cpp AForm.cpp ShrubberyCreationForm.cpp PresidentialPardonForm.cpp \
-				RobotomyRequestForm.cpp	Intern.cpp
+SRC_CLASSES	:=	ScalarConverter.cpp
 INC			:=	inc/ inc/classes/
 LIB			:=
 FRAMEWORK	:=
@@ -39,7 +38,7 @@ endif
 TOTAL_OBJ		:=	$(words $(OBJ))
 NB_OBJ			:=	0
 RM			:=	rm -rf
-CC			:=	g++
+CC			:=	c++
 DIR_DUP     =	mkdir -p "$(@D)"
 #-MMD -MP = Used to add dependencies during precomp. (for .h)
 CPPFLAGS    :=	-MMD -MP $(addprefix -I,$(INC))
