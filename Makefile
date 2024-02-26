@@ -9,7 +9,7 @@ PUR	= \033[35m
 CYN	= \033[36m
 LGR	= \033[37m
 RST	= \033[0m
-NAME		:=	bureaucrats
+NAME		:=	program
 UNAME_S 	:= $(shell uname -s)
 #---------------Directories----------------------
 SRC_D		:=	src/
@@ -17,7 +17,7 @@ BUILD_D		:=	.build/
 LIB_D		:=	
 #---------------SRCs and Libs-(mac)\/--------------
 SRC			:=	main.cpp
-SRC_CLASSES	:=	ScalarConverter.cpp
+SRC_CLASSES	:=	
 INC			:=	inc/ inc/classes/
 LIB			:=
 FRAMEWORK	:=
